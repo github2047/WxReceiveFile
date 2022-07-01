@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        .el-scrollbar__wrap {
+            overflow-x: hidden;
+        }
+    </style>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../static/js/element-ui/2.11.0/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../static/css/vant.css">
+<!--    <link rel="stylesheet" href="../static/js/vue-pdf/src/annotationLayer.css"></link>-->
+    <script src="../static/js/vue.js"></script>
+    <script src="../static/js/vue-router.js"></script>
+    <script src="../static/js/element-ui/2.11.0/lib/index.js"></script>
+    <script src="../static/js/httpVueLoader.js"></script>
+    <script src="../static/js/axios.min.js"></script>
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/vant.min.js"></script>
+    <script src="../static/js/pdfjs/build/pdf.js"></script>
+<!--    <script src="../static/js/jspdf.umd.min.js"></script>-->
+<!--    <script src="../static/js/html2canvas.min.js"></script>-->
+<!--    <script src="../static/js/vue-pdf/src/buffer-loader.js"></script>-->
+<!--    <script src="../static/js/vue-pdf/src/CMapReaderFactory.js"></script>-->
+<!--    <script src="../static/js/vue-pdf/src/componentFactory.js"></script>-->
+<!--    <script src="../static/js/vue-pdf/src/pdfjsWrapper.js"></script>-->
+
+</head>
+<body>
+<div id="app">
+    <div id="userid" v-show="false" th:text="${map.userid}"></div>
+<!--    <div id="name" v-show="false" th:text="${map.name}"></div>-->
+    <router-view/>
+</div>
+</body>
+<script>
+    const router = new VueRouter({
+        model: 'history',
+        routes: [
+            {
+                path: '/home',
+                name: 'home',
+                component: httpVueLoader('../static/vue/index.vue'),
+            },
+            {
+                path: '/card',
+                name: 'card',
+                component: httpVueLoader('../static/vue/cardUpload.vue'),
+            },
+            {
+                path: '/js',
+                name: 'jiesuan',
+                component: httpVueLoader('../static/vue/jiesuan.vue'),
+            },
+        ]
+    });
+
+    new Vue({
+        el: '#app',
+        router,
+        data: {
+        },
+        mounted() {
+            let userid= $("#userid").text();
+            // let name= $("#name").text();
+            this.$router.push({
+               name:"home",
+                params: {
+                    userid:userid
+                }
+            })
+        },
+        methods: {
+        }
+    })
+</script>
+</html>

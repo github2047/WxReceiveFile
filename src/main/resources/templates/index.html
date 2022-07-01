@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        .el-scrollbar__wrap {
+            overflow-x: hidden;
+        }
+    </style>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../static/js/element-ui/2.11.0/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../static/css/vant.css">
+    <script src="../static/js/vue.js"></script>
+    <script src="../static/js/vue-router.js"></script>
+    <script src="../static/js/element-ui/2.11.0/lib/index.js"></script>
+    <script src="../static/js/httpVueLoader.js"></script>
+    <script src="../static/js/axios.min.js"></script>
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/wxLogin.js"></script>
+    <script src="../static/js/vant.min.js"></script>
+    <script src="../static/js/jspdf.umd.min.js"></script>
+    <script src="../static/js/html2canvas.min.js"></script>
+</head>
+<body>
+<el-scrollbar style="max-height: 1080px">
+    <div id="app">
+        <router-view/>
+    </div>
+</el-scrollbar>
+</body>
+<script>
+    const router = new VueRouter({
+        model: 'history',
+        routes: [
+            {
+                path: '/',
+                name: 'login',
+                component: httpVueLoader('../static/vue/login.vue')
+            },
+            {
+                path: '/wx',
+                name: 'login',
+                component: httpVueLoader('../static/vue/wxLogin.vue')
+            },
+        ]
+    });
+    // router.beforeEach(
+    //     /**
+    //      *
+    //      * @param to 即将显示的路由信息
+    //      * @param from 来源路由信息
+    //      * @param next 继续执行下一个动作的函数对象
+    //      */
+    //     (to, from, next) => {
+    //         let ElMessage = window.ELEMENT.Message;
+    //         // 获取到要显示的页面路径
+    //         const path = to.path;
+    //         // 判断是否是登录页面 应为登录页面不需要权限验证
+    //         if (path.startsWith('/login')||path.startsWith('/reg')) {
+    //             // @ts-ignore
+    //             // 显示登录页面
+    //             next();
+    //         } else {
+    //             // 获取用户登录信息
+    //             const token = localStorage.getItem("login_token");
+    //             axios.get("/qywx/verify_loginInfo").then(r=>{
+    //                 if (r.data.code==0){
+    //                     next()
+    //                     return;
+    //                 }else{
+    //                     ElMessage({
+    //                         message: r.data.message,
+    //                         grouping: true,
+    //                         type: 'error',
+    //                     })
+    //                     next({path: '/login'})
+    //                     return;
+    //                 }
+    //             }).catch(e=>{
+    //                 ElMessage({
+    //                     message: e.message,
+    //                     grouping: true,
+    //                     type: 'error',
+    //                 })
+    //                 next({path: '/login'})
+    //             })
+    //         }
+    //     })
+    new Vue({
+        el: '#app',
+        router,
+        data: {
+
+        },
+        mounted() {
+
+        },
+        methods: {
+        }
+    })
+</script>
+</html>
