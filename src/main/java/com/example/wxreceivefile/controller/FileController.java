@@ -42,7 +42,7 @@ public class FileController {
             pdfFile.createNewFile();
             FileOutputStream fos1 = new FileOutputStream(pdfFile);
             // 创建文档
-            Document doc = new Document(null, 0, 0, 0, 0);
+            Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
             //doc.open();
             // 写入PDF文档
             PdfWriter.getInstance(doc, fos1);

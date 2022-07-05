@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>钉钉登录</title>
+    <link rel="stylesheet" href="../static/js/element-ui/2.11.0/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="../static/css/vant1.css">
+</head>
+<script src="../static/js/dingtalk-open.js"></script>
+<script src="../static/js/vue.js"></script>
+<script src="../static/js/vue-router.js"></script>
+<script src="../static/js/element-ui/2.11.0/lib/index.js"></script>
+<script src="../static/js/httpVueLoader.js"></script>
+<script src="../static/js/axios.min.js"></script>
+<script src="../static/js/jquery.js"></script>
+<script src="../static/js/vant.min.js"></script>
+<body>
+<div id="ts" style="font-size: 50px;margin-left: 20px;"></div>
+<div id="app">
+    <router-view/>
+</div>
+</body>
+<script>
+    const router = new VueRouter({
+            routes: [
+                {
+                    path: '/',
+                    name: 'ding',
+                    component: httpVueLoader("../static/vue/ding.vue")
+                },
+            ]
+        }
+    )
+    new Vue({
+        el: '#app',
+        router,
+        data: {
+            loading:true
+        },
+        mounted() {}
+    })
+
+    function getQueryString(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        let r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return decodeURIComponent(r[2]);
+        }
+        return null;
+    }
+
+    function ddInit() {
+        try {
+            if (dd.env.platform === 'notInDingTalk') {
+                const app=document.getElementById("app")
+                app.remove()
+                document.getElementById("ts").innerHTML='请使用钉钉登录！';
+            } else {
+                dd.ready(function () {
+                    var p = new Promise(function (resolve, reject) {
+                        dd.runtime.permission.requestAuthCode({
+                            corpId: getQueryString("corpId"),//你们企业钉钉的CORPID
+                            onSuccess: function (info) {
+                                {
+                                    let code = info.code;
+                                    const ts=document.getElementById("ts")
+                                    document.body.removeChild(ts);
+                                    window.localStorage.setItem("code", code);
+                                    resolve(code)
+                                }
+                            },
+                            onFail: function (err) {
+                                reject(err)
+                            }
+                        })
+                        p.then((code) => {
+                            console.log("初始化钉钉成功：", code);
+                        }).catch((err) => {
+                            console.log("初始化钉钉异常：", err);
+                        });
+                    });
+                });
+            }
+        } catch (e) {
+            console.log("初始化钉钉异常：", e);
+        }
+    }
+   ddInit();
+
+</script>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    .el-loading-spinner i {
+        font-size: 100px;
+    }
+    .el-loading-spinner .el-loading-text {
+        font-size: 50px;
+    }
+</style>
+</html>

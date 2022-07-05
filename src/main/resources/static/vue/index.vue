@@ -1,44 +1,27 @@
 <template>
-<div style="background: #eee;height: 100vh">
+<div>
 <!--  轮播-->
   <div style="width: 98%;margin: 0 auto;">
-    <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
-      <van-swipe-item>1</van-swipe-item>
-      <van-swipe-item>2</van-swipe-item>
-      <van-swipe-item>3</van-swipe-item>
-      <van-swipe-item>4</van-swipe-item>
+    <van-swipe :autoplay="3000" indicator-color="white" style="height: 200px">
+      <van-swipe-item><img src="../static/image/01.jfif" width="100%" height="100%"></van-swipe-item>
+      <van-swipe-item><img src="../static/image/02.jpg" width="100%" height="100%"></van-swipe-item>
+      <van-swipe-item><img src="../static/image/03.jpg" width="100%" height="100%"></van-swipe-item>
+      <van-swipe-item><img src="../static/image/04.jpg" width="100%" height="100%"></van-swipe-item>
     </van-swipe>
   </div>
 <!--  内容-->
   <div class="content" :v-loading="loading">
-    <van-uploader
-        style="height: 260px"
-        :max-size="20*1024*1024"
-        :after-read="afterRead"
-        accept="*"
-
-    >
-      <div style="margin-top: 0px;">
-        <span><i class="el-icon-s-home" style="font-size: 100px;"></i></span>
+    <div style="height: 100px" @click="file()">
+        <span><i class="el-icon-s-home" style="font-size: 40px;margin-top: 15px;"></i></span>
         <span>本地文件</span>
       </div>
-    </van-uploader>
-
-    <van-uploader
-        style="height: 260px"
-        :max-size="20*1024*1024"
-        :after-read="afterRead"
-        accept="image/*"
-    >
-      <div style="margin-top: 0px;">
-        <span><i class="el-icon-picture-outline" style="font-size: 100px;"></i></span>
+    <div style="height: 100px" @click="image()">
+        <span><i class="el-icon-picture-outline" style="font-size: 40px;margin-top: 15px;"></i></span>
         <span>图片打印</span>
       </div>
-    </van-uploader>
-
-    <div style="height: 260px" @click="card()">
-      <span><i class="el-icon-s-custom" style="font-size: 100px;margin-top: 50px;margin-bottom: 20px"></i></span>
-      <span style="margin-top: 60px">证件打印</span>
+    <div style="height: 100px" @click="card()">
+      <span><i class="el-icon-s-custom" style="font-size: 40px;margin-top: 15px;"></i></span>
+      <span>证件打印</span>
     </div>
   </div>
 </div>
@@ -49,107 +32,50 @@ module.exports = {
   name: "index",
   data(){
     return{
-      loginInfo:{
-        userid:this.$route.params.userid,
-        name:this.$route.params.name
-      },
+      userid:this.$route.query.userid,
       loading:false,
     }
   },
   mounted() {
+
   },
   methods: {
-    sx(){
-      this.$router.go(0);
+    file(){
+      this.$router.push({path: '/file', query: {userid: this.userid}})
     },
-    beforeUpload(file){
-      if(file.size>(20*1024*1024)){
-        ElMessage({
-          message:"文件大小不可以超过20MB",
-          grouping:true,
-          type:"error"
-        })
-        return false;
-      }
-    },
-    afterRead(file) {
-      console.log(file)
-      // 此时可以自行将文件上传至服务器
-      if(file.file.size>(20*1024*1024)){
-        ElMessage({
-          message:"文件大小不可以超过20MB",
-          grouping:true,
-          type:"error"
-        })
-        return false;
-      }
-      this.loading=true;
-      let formData=new FormData();
-      formData.append('userid',"123")
-      formData.append('files',file.file)
-      console.log(file.file)
-      axios.post("/file/upload",formData).then(r=>{
-        if(r.data.status==200){
-          ElMessage({
-            message:"上传成功",
-            grouping:true,
-            type:"success"
-          })
-          this.fileList=[];
-          this.loading=false;
-        }else{
-          ElMessage({
-            message: "上传失败"+r.data.message,
-            grouping: true,
-            type: 'error',
-          })
-          // }
-          this.loading=false;
-        }
-      }).catch(e=>{
-        ElMessage({
-          message: e.message,
-          grouping: true,
-          type: 'error',
-        })
-      }).finally(f=>{
-        this.loading=false;
-      })
+    image(){
+      this.$router.push({path: '/image', query: {userid: this.userid}})
     },
     card(){
-      this.$router.push("/js")
+      this.$router.push({path: '/card', query: {userid: this.userid}})
     }
   }
 }
 </script>
 
 <style scoped>
-.my-swipe .van-swipe-item {
-  height: 500px;
-  color: #fff;
-  font-size: 40px;
-  line-height: 150px;
-  text-align: center;
-  background-color: #39a9ed;
+html,body{
+  width: 100%;
+  height: 100%;
 }
 .content{
   width: 98%;
-  margin: 100px auto;
+  margin: 40px auto;
 }
 .content div{
   display: inline-block;
   width: 75%;
-  height: 100px;
-  margin: 33px 13%;
+  margin: 15px 12%;
   text-align: center;
-  font-size: 20px;
-  background: #fff;
+  font-size: 18px;
   border-radius: 20px;
+  background: linear-gradient(40deg, #eeeeee, #e6e6e6);
+  box-shadow:  9px 9px 100px #a1a1a1,
+  -9px -9px 100px #ffffff;
 }
 
 .content div span{
   display: block;
-  height: 100px!important;
 }
 /*滚动条*/
 .con .el-scrollbar__wrap {

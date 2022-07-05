@@ -31,19 +31,6 @@ public class QyWxController {
     private String redirectUri;
     @Autowired
     public RedisUtil redisUtil;
-    @RequestMapping("/home")
-    private ModelAndView home(String userid,Model model){
-//        String userid= (String) map.get("userid");
-        System.out.println(userid);
-        Map resultMap=new HashMap();
-        resultMap.put("userid",userid);
-        model.addAttribute("map",resultMap);
-        return toPage("home");
-    }
-    @RequestMapping(value = "/page/{page}", method = RequestMethod.GET)
-    public ModelAndView toPage(@PathVariable("page") String page) {
-        return new ModelAndView(String.format("%s", page));
-    }
 
     //验证企业微信
     @GetMapping("/verifyQyWx")
@@ -216,7 +203,7 @@ public class QyWxController {
 
     //通过code和access_token获取扫码用户的userid
     @RequestMapping("/getUserId")
-    public ModelAndView getUserId(String code, Model model){
+    public String getUserId(String code, Model model){
         String url="https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=%s";
         //获取access_token在redis中 如果没有就重新获取
         String access_token = (String) redisUtil.get("qywx_access_token");
@@ -264,7 +251,7 @@ public class QyWxController {
         }
         model.addAttribute("map",map);
 
-        return toPage("home");
+        return "home";
     }
     //通过userid获取用户的详细信息
     @RequestMapping("/getUserInfo")

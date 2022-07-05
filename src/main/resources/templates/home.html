@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta charset="UTF-8">
     <title>首页</title>
     <style>
@@ -24,18 +25,11 @@
     <script src="../static/js/jquery.min.js"></script>
     <script src="../static/js/vant.min.js"></script>
     <script src="../static/js/pdfjs/build/pdf.js"></script>
-<!--    <script src="../static/js/jspdf.umd.min.js"></script>-->
-<!--    <script src="../static/js/html2canvas.min.js"></script>-->
-<!--    <script src="../static/js/vue-pdf/src/buffer-loader.js"></script>-->
-<!--    <script src="../static/js/vue-pdf/src/CMapReaderFactory.js"></script>-->
-<!--    <script src="../static/js/vue-pdf/src/componentFactory.js"></script>-->
-<!--    <script src="../static/js/vue-pdf/src/pdfjsWrapper.js"></script>-->
-
+    <script src="../static/js/html2canvas.min.js"></script>
 </head>
 <body>
 <div id="app">
     <div id="userid" v-show="false" th:text="${map.userid}"></div>
-<!--    <div id="name" v-show="false" th:text="${map.name}"></div>-->
     <router-view/>
 </div>
 </body>
@@ -54,9 +48,14 @@
                 component: httpVueLoader('../static/vue/cardUpload.vue'),
             },
             {
-                path: '/js',
-                name: 'jiesuan',
-                component: httpVueLoader('../static/vue/jiesuan.vue'),
+                path: '/image',
+                name: 'image',
+                component: httpVueLoader('../static/vue/imageUpload.vue'),
+            },
+            {
+                path: '/file',
+                name: 'file',
+                component: httpVueLoader('../static/vue/FileUpload.vue'),
             },
         ]
     });
@@ -67,17 +66,14 @@
         data: {
         },
         mounted() {
-            let userid= $("#userid").text();
-            // let name= $("#name").text();
-            this.$router.push({
-               name:"home",
-                params: {
-                    userid:userid
-                }
-            })
+            {
+                let userid= $("#userid").text();
+                this.$router.push({path: '/home', query: {userid: userid}})
+            }
         },
         methods: {
         }
     })
+
 </script>
 </html>

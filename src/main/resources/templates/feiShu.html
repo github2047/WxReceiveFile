@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>飞书登录</title>
+  <link rel="stylesheet" href="../static/js/element-ui/2.11.0/lib/theme-chalk/index.css">
+  <link rel="stylesheet" href="../static/css/vant1.css">
+</head>
+<script src="../static/js/feiShu.js"></script>
+<script src="../static/js/vue.js"  ></script>
+<script src="../static/js/vue-router.js"></script>
+<script src="../static/js/element-ui/2.11.0/lib/index.js"></script>
+<script src="../static/js/httpVueLoader.js"></script>
+<script src="../static/js/axios.min.js"></script>
+<script src="../static/js/vant.min.js"></script>
+<body>
+<div id="ts" style="font-size: 50px;margin-left: 20px;"></div>
+<div id="app">
+  <router-view/>
+</div>
+</body>
+<script>
+  const router = new VueRouter({
+            routes: [
+              {
+                path: '/',
+                name: 'feiShu',
+                component: httpVueLoader("../static/vue/feiShu.vue")
+              },
+            ]
+          }
+  )
+  new Vue({
+    el: '#app',
+    router,
+    data: {
+    },
+    mounted(){
+
+    }
+  })
+  function fsInit() {
+    try {
+        window.h5sdk.ready(() => { // ready方法不需要每次都调用
+          var p = new Promise(function (resolve, reject) {
+            tt.requestAuthCode({
+              appId: "cli_a23ea7c916f99013",
+              success: (info) => {
+                let code = info.code;
+                const ts=document.getElementById("ts")
+                ts.remove();
+                window.localStorage.setItem("code", code);
+                resolve(code)
+              },
+              fail: (err) => {
+                reject(err)
+                this.$notify("error:"+JSON.stringify(err))
+              }
+            });
+            p.then((code) => {
+              console.log("初始化fs成功：", code);
+              alert(code)
+            }).catch((err) => {
+              console.log("初始化飞书异常：", JSON.stringify(err));
+            });
+          })
+        });
+      // }
+    } catch (e) {
+      console.log("初始化飞书异常2：", e);
+      const app=document.getElementById("app")
+      app.remove()
+      if(e=="TypeError: Cannot read properties of undefined (reading 'ready')" ||
+              e=="TypeError: Cannot read property 'ready' of undefined"){
+        document.getElementById("ts").innerHTML = "请使用飞书登录"
+      }else{
+        document.getElementById("ts").innerHTML = "登录错误"+e
+      }
+    }
+  }
+  fsInit();
+</script>
+<style>
+  *{
+    margin: 0;
+    padding: 0;
+  }
+  .el-loading-spinner i {
+    font-size: 100px;
+  }
+  .el-loading-spinner .el-loading-text {
+    font-size: 50px;
+  }
+</style>
+</html>
