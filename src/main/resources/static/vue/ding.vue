@@ -16,14 +16,14 @@ module.exports = {
       userid: '',
       name:'',
       status:0,
-      fileList: []
+      fileList: [],
     }
   },
   mounted() {
-      axios.get('http://mytest.vaiwan.com/ding/ding', {params: {code: this.code}}).then(({data})=> {
+      axios.get('/ding/ding', {params: {code: this.code}}).then(({data})=> {
         if(data.status==200){
           this.userid = data.userid;
-          window.location.href="http://ztzt.vaiwan.com/home?userid="+this.userid;
+          window.location.href="/home?userid="+this.userid;
         }
         else if(data.status==500){
           const loading=document.getElementById("loading")
@@ -39,7 +39,6 @@ module.exports = {
           }
         }
       })
-    // }
   },
   methods: {
   }

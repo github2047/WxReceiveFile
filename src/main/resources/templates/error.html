@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta charset="UTF-8">
     <title>登录失败</title>
 </head>
 <body>
-<div style="font-size: 50px;font-weight: bold;margin: 50px;">登录失败，请重新登录</div>
+<div style="font-size: 30px;font-weight: bold;margin: 10px;" th:text="${msg}">登录失败，请重新登录</div>
 </body>
 </html>

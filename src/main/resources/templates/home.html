@@ -57,23 +57,52 @@
                 name: 'file',
                 component: httpVueLoader('../static/vue/FileUpload.vue'),
             },
+            {
+                path: '/error',
+                name: 'error',
+                component: httpVueLoader('../static/vue/error.vue'),
+            },
         ]
     });
 
     new Vue({
         el: '#app',
         router,
-        data: {
+        data() {
+
         },
         mounted() {
-            {
                 let userid= $("#userid").text();
-                this.$router.push({path: '/home', query: {userid: userid}})
-            }
+                // this.$router.push({path: '/home', query: {userid: userid}})
+                axios.post("/verify",{
+                    "userid":userid
+                }).then(r=>{
+                    if(r.data.status=="200"){
+                        let loginName=r.data.loginName;
+                        this.$router.push({path: '/home', query: {userid: loginName}})
+                    }else{
+                        this.$router.push("/error")
+                    }
+                }).catch(e=>{
+                    this.$toast(e.getMessages())
+                })
         },
         methods: {
         }
     })
-
+    // router.beforeEach(
+    //     /**
+    //      *
+    //      * @param to 即将显示的路由信息
+    //      * @param from 来源路由信息
+    //      * @param next 继续执行下一个动作的函数对象
+    //      */
+    //     (to, from, next) => {
+    //         // 获取到要显示的页面路径
+    //         const path = to.path;
+    //         // 判断id是否存在
+    //
+    //
+    //     })
 </script>
 </html>

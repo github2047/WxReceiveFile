@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div style="width: 100%;height: 96vh;"
+      v-loading="loading" :element-loading-text="loadingText">
     <div>
       <van-nav-bar
-          style="margin-top: 20px;height: 50px;font-size: 20px"
+          style="margin: 20px 0px;height: 50px;font-size: 18px"
           title="文件上传"
           left-text="返回"
           left-arrow
@@ -10,10 +11,13 @@
       ></van-nav-bar>
     </div>
     <div class="con" >
-      <van-uploader v-model="fileList"
+      <van-uploader v-model="fileList.files"
                     :max-count="1"
                     multiple
                     accept="*"
+                    :after-read="af"
+                    :before-delete="del"
+
       />
     </div>
     <hr/>
@@ -32,45 +36,46 @@
       <div style="float: left;margin-left: 5px;color:#646566;font-size: 18px;">单双面</div>
       <div style="float: right;">
         <van-radio-group v-model="DorS" direction="horizontal">
-          <van-radio name="1">单面</van-radio>
-          <van-radio name="2">双面</van-radio>
+          <van-radio name="OFF">单面</van-radio>
+          <van-radio name="ON">双面</van-radio>
         </van-radio-group>
       </div>
       <br style="clear: both;"/>
       <hr />
       <div style="float: left;margin-left: 5px;color:#646566;font-size: 18px;">色彩模式</div>
       <div style="float: right;">
-        <van-radio-group v-model="printColor" direction="horizontal">
+        <van-radio-group v-model="printColor" direction="horizontal" @change="SzPrintColor">
           <van-radio name="1">黑白</van-radio>
-          <van-radio name="2">彩色</van-radio>
+          <van-radio name="3">彩色</van-radio>
         </van-radio-group>
       </div>
       <br style="clear: both;"/>
       <hr />
       <div style="float: left;margin-left: 5px;color:#646566;font-size: 18px;">打印份数</div>
       <div style="float: right;">
-        <van-stepper v-model="printNum" integer />
+        <van-stepper v-model="printNum" integer max="100" @overlimit="overLimit"/>
       </div>
       <br style="clear: both;"/>
       <hr />
     </div>
-
     <van-dialog v-model="showPdf" title="预览" >
-      <div style="width: 830px;height: 500px;overflow: auto;background-color: #ccc;">
-        <div v-for="data in PdfPath" >
-          <img :src="'http://mytest.vaiwan.com/upload/'+data" style="width:98%;margin-left: 10px;border: 1px solid #000;" alt="">
+      <div style="width: 100%;height: 500px;overflow: auto;background-color: #ccc;">
+        <div :style="'height: 480px;overflow: auto;margin-top: 10px;filter: grayscale('+ImgColor+')'">
+          <div v-for="(data,index) in PdfPath" >
+            <img :src="'/upload/'+data" style="display:inline-block;width:90%;margin:5px 15px 0px" alt="">
+            <div style="text-align: center;margin-top: 5px">{{index+1}}/{{ PdfPath.length }}</div>
+          </div>
         </div>
-      </div>    </van-dialog>
+      </div>
+    </van-dialog>
 
     <van-button style="width: 96%;height: 50px;font-size: 20px;margin: 30px 10px 10px;
                 border-radius: 10px; box-shadow:  9px 9px 100px #a1a1a1,-9px -9px 100px #ffffff;
                 border: 1px solid #ccc;background-color: #eee"
-                :loading="ylLoading" loading-text="上传中，请等待..."
                 type="default" @click="yl()">预览</van-button>
     <van-button style="width: 96%;height: 50px;font-size: 20px;
                 border-radius: 10px; box-shadow:  9px 9px 100px #a1a1a1,-9px -9px 100px #ffffff;
                 margin: 10px;" type="primary"
-                :loading="commitLoading" loading-text="提交中，请等待..."
                 @click="commit()">提交</van-button>
   </div>
 </template>
@@ -80,100 +85,234 @@ module.exports = {
   data(){
     return{
       userid:this.$route.query.userid,
-      ylLoading:false,
-      commitLoading:false,
-      fileList: [],
+      fileList: {
+        files:[],
+        uuid:"1"
+      },
       PdfPath:[],
       showPdf:false,
       paperSize:"2",
-      DorS:"1",
-      printColor:"2",
+      DorS:"ON",
+      printColor:"1",
       printNum:1,
       isUpload:false,
+      isShow:false,
+      uuid:"2",
+      loading:false,
+      loadingText:"文件上传中...",
+      ImgColor:1,
+      pdfFilePath:"",
+      fileName:""
     }
   },
   mounted() {
+
   },
   methods: {
     onClickLeft() {
       this.$router.push({path: '/home', query: {userid: this.userid}})
     },
+    af(file){
+      if(file.file.size>(20*1024*1024)){
+        this.$notify('只能上传小于20MB的文件');
+        this.fileList=[];
+        return false;
+      }
+      if(!["application/pdf","application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/msword","text/plain","application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/vnd.ms-powerpoint",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation"].includes(file.file.type)){
+        this.$notify('只能上传word、xls、ppt、txt、pdf文件');
+        this.fileList.files=[];
+        return false;
+      }
+      let uuid=Math.random();
+      this.fileList.uuid=uuid;
+    },
+    del(file,detail){
+      this.$dialog.confirm({
+        title: '删除',
+        message: '确定要删除该文件吗？',
+      }).then(() => {
+        this.fileList.files.splice(detail.index,1)
+        this.$toast.success("已删除")
+        let uuid=Math.random();
+        this.fileList.uuid=uuid;
+      }).catch(() => {
+        this.$toast.success("已取消")
+      });
+      return false
+    },
+    SzPrintColor(){
+      if(this.printColor=="1"){
+        this.ImgColor=1;
+      }
+      if(this.printColor=="3"){
+        this.ImgColor=0;
+      }
+    },
+    overLimit(){
+      this.$toast.fail("打印份数只能在1-100之间")
+    },
     yl(){
-      // if(this.fileList.length<=0){
-      //   this.$toast.fail('至少选择一个文件进行上传');
-      //   return false;
-      // }
-      this.ylLoading=true
-      // if(this.isUpload==false){
-      //   this.upload();
-      // }
-      this.showPdf=true;
+      if(this.fileList.files.length<=0){
+        this.$toast.fail('至少选择一个文件进行上传');
+        return false;
+      }
+      this.loading=true;
+      if(this.fileList.uuid!=this.uuid){
+        this.upload("show");
+      }else{
+        this.loading=false;
+        this.showPdf=true;
+      }
     },
     commit(){
-      if(this.fileList.length<=0){
+      this.loading=true
+      if(this.fileList.files.length<=0){
         this.$toast.fail('至少选择一个文件进行上传');
-        this.ylLoading=false
-        this.commitLoading=false
+        this.loading=false;
         return false;
       }
-      this.commitLoading=true
-      if(this.isUpload==false){
-        this.upload();
+      if(this.fileList.uuid!=this.uuid){
+        this.isShow=false;
+        this.upload('submit')
       }else{
-        this.commitLoading=false
-        this.$toast.success('提交完成');
+        if(this.isUpload){
+          this.loading=false;
+          this.printf();
+        }else{
+          this.isShow=false;
+          this.upload('submit')
+        }
       }
     },
-    upload(){
-      if(this.fileList[0].file.size>(20*1024*1024)){
-        this.$notify('只能上传小于20MB的文件');
-        this.ylLoading=false
-        this.commitLoading=false
-        return false;
+    upload(type) {
+      try {
+        if (this.fileList.files[0].file.size > (20 * 1024 * 1024)) {
+          this.$notify('只能上传小于20MB的文件');
+          this.ylLoading = false
+          this.commitLoading = false
+          return false;
+        }
+        let formData = new FormData();
+        formData.append('userid', this.userid)
+        formData.append("paperSize", this.paperSize);
+        formData.append("dorS", this.DorS);
+        formData.append("printColor", this.printColor);
+        formData.append("printNum", this.printNum);
+        this.fileList.files.forEach(item => {
+          formData.append('files', item.file)
+        });
+        let time1=new Date().getTime()
+        axios({
+          url: "/upload/uploadImage",
+          method: "post",
+          data: formData,
+          headers: {"Content'-Type": "multipart/form-data"}
+        }).then(({data}) => {
+          let time2=new Date().getTime()
+          this.$toast("上传耗时"+((time2 - time1) / 1000.0)+"秒");
+          if (data.status == 200) {
+            this.pdfFilePath=data.data;
+            this.fileName=data.fileName;
+            if (type === 'submit') {
+              this.loadingText="提交中...";
+              this.printf();
+            }else if (type === "show") {
+              this.loadingText="预览生成中...";
+              this.toImage();
+            }
+          } else {
+            this.$notify({
+              type: "danger",
+              message: data.msg
+            })
+          }
+        }).catch(e => {
+          this.$notify({
+            type: "danger",
+            message: e.message
+          })
+          this.loadingText="文件上传中..."
+          this.loading = false;
+        })
+      }catch (e) {
+        this.$notify({
+          type: "danger",
+          message: e.message
+        })
+        this.loading=false;
+        this.isShow=false;
       }
-      let formData=new FormData();
-      formData.append('userid',this.userid)
-      formData.append("paperSize",this.paperSize);
-      formData.append("dorS",this.DorS);
-      formData.append("printColor",this.printColor);
-      formData.append("printNum",this.printNum);
-      this.fileList.forEach(item => {
-        formData.append('files',item.file)
-      });
-      axios({
-        url:"http://mytest.vaiwan.com/upload/uploadImage",
-        method: "post",
-        data:formData,
-        headers : {"Content'-Type" : "multipart/form-data"}
+    },
+    toImage(){
+      let time1=new Date().getTime();
+      axios.post("/upload/toImage",{
+        "pdfFilePath":this.pdfFilePath
       }).then(({data})=>{
-        if(data.status==200){
-          this.$toast.success('上传成功');
-          this.isUpload=true;
-          this.PdfPath=data.data;
+        let time2=new Date().getTime()
+        this.$toast("预览耗时"+((time2 - time1) / 1000.0)+"秒");
+        if (data.status == 200) {
+          console.log(data)
+          // this.$toast.success('上传成功');
+          this.uuid=this.fileList.uuid;
+          this.isUpload = true;
+          this.PdfPath = data.data;
+          this.showPdf = true;
         }else{
           this.$notify({
-            type:"danger",
-            message:data.msg
+            type: "danger",
+            message: "预览生成失败"+data.msg
           })
         }
       }).catch(e=>{
         this.$notify({
-          type:"danger",
-          message:e.message
+          type: "danger",
+          message:"预览生成失败"+ e.message
         })
-      }).finally(f=>{
-        this.ylLoading=false
-        this.commitLoading=false
-      })
+      }).finally(f => {
+        this.loadingText="文件上传中..."
+        this.loading = false;
+        this.isShow=false;
+      });
     },
+    printf(){
+      let fileName =this.pdfFilePath
+      let filePath=fileName.substring(fileName.lastIndexOf("/")+1)
+      let time1=new Date().getTime()
+      axios.post("/upload/printf",{
+        "fileName":this.fileName,
+        "fileUrl":filePath,
+        "loginName":this.userid,
+        "printColor":this.printColor,
+        "dorS":this.DorS,
+        "paperSize":this.paperSize,
+        "printNum":this.printNum
+      }).then(r=>{
+        let time2=new Date().getTime()
+        this.$toast("提交耗时"+((time2 - time1) / 1000.0)+"秒");
+        if(r.data=="ok"){
+          this.$toast.success("提交成功")
+          // this.$router.go(0)
+        }else{
+          this.$notify("提交失败："+r.data)
+        }
+      }).catch(e=>{
+        this.$notify({
+          type: "danger",
+          message: e.message
+        })
+      }).finally(f => {
+        this.loadingText="文件上传中..."
+        this.loading = false;
+      });
+    }
   }
 }
 </script>
 
 <style scoped>
-body{
-  margin: 10px!important;
-}
 .van-nav-bar__title {
   font-size: 20px;
 }
@@ -182,6 +321,15 @@ body{
 }
 .van-stepper__minus, .van-stepper__plus {
   margin-right: 10px;
+}
+.van-nav-bar__left, .van-nav-bar__right {
+  padding: 0px!important;
+}
+.van-uploader__preview-image {
+  display: block;
+  width: 75px;
+  height: 75px;
+  overflow: hidden;
 }
 /*.con{*/
 /*  width: 925px;*/

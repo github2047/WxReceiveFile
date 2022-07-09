@@ -1,21 +1,16 @@
 package com.example.wxreceivefile.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.wxreceivefile.mapper.PlatUserMapper;
+import com.example.wxreceivefile.pojo.PlatUser;
 import com.example.wxreceivefile.utils.*;
 import lombok.extern.slf4j.Slf4j;
-import org.dom4j.DocumentException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,74 +20,76 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("/wx")
 public class WxController {
+    @Autowired
+    private PlatUserMapper platUserMapper;
     //验证微信
-    @GetMapping("/verifyWx")
-    @ResponseBody
-    public String verifyWXToken(HttpServletRequest request) throws AesException {
-        String msgSignature = request.getParameter("signature");
-        String msgTimestamp = request.getParameter("timestamp");
-        String msgNonce = request.getParameter("nonce");
-        String echostr = request.getParameter("echostr");
-        if (WXPublicUtils.verifyUrl(msgSignature, msgTimestamp, msgNonce)) {
-            System.out.println(echostr);
-            return echostr;
-        }
-        return null;
-    }
-
-    //微信接收消息
-    @RequestMapping("/verifyWx")
-    @ResponseBody
-    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        // 设置一下相应的格式
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-        PrintWriter out = resp.getWriter();// 获取resq的数据流
-        Map<String, String> map;
-        try {
-            map = MessageUtil.xmlToMap(req);
-            String fromUserName = map.get("FromUserName");
-            String toUserName = map.get("ToUserName");
-            String msgType = map.get("MsgType");
-            String content = map.get("Content");
-            String format = map.get("Format");
-
-//            String message = null;
-//            if ("text".equals(msgType)) {
-//                TextMessage text = new TextMessage();
-//                text.setFromUserName(toUserName);
-//                text.setToUserName(fromUserName);
-//                text.setMsgType("text");
-//                text.setCreateTime(new Date().getTime());
-//                text.setContent("您发送的消息类型是:" + msgType + ";");
-//                message = MessageUtil.textMessageToXml(text);// message来接收
-//            }
-//            if ("image".equals(msgType)) {
-//                TextMessage text = new TextMessage();
-//                text.setFromUserName(toUserName);
-//                text.setToUserName(fromUserName);
-//                text.setMsgType("text");
-//                text.setCreateTime(new Date().getTime());
-//                text.setContent("您发送的消息类型是:" + msgType + ";");
-//                message = MessageUtil.textMessageToXml(text);// message来接收
-//            }
-//            if ("voice".equals(msgType)) {
-//                TextMessage text = new TextMessage();
-//                text.setFromUserName(toUserName);
-//                text.setToUserName(fromUserName);
-//                text.setMsgType("text");
-//                text.setCreateTime(new Date().getTime());
-//                text.setContent("您发送的消息类型是:" + msgType + ";");
-//                message = MessageUtil.textMessageToXml(text);// message来接收
-//            }
-            System.out.println(map);
-//            out.println(message);
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } finally {
-            out.close();
-        }
-    }
+//    @GetMapping("/verifyWx")
+//    @ResponseBody
+//    public String verifyWXToken(HttpServletRequest request) throws AesException {
+//        String msgSignature = request.getParameter("signature");
+//        String msgTimestamp = request.getParameter("timestamp");
+//        String msgNonce = request.getParameter("nonce");
+//        String echostr = request.getParameter("echostr");
+//        if (WXPublicUtils.verifyUrl(msgSignature, msgTimestamp, msgNonce)) {
+//            System.out.println(echostr);
+//            return echostr;
+//        }
+//        return null;
+//    }
+//
+//    //微信接收消息
+//    @RequestMapping("/verifyWx")
+//    @ResponseBody
+//    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+//        // 设置一下相应的格式
+//        req.setCharacterEncoding("UTF-8");
+//        resp.setCharacterEncoding("UTF-8");
+//        PrintWriter out = resp.getWriter();// 获取resq的数据流
+//        Map<String, String> map;
+//        try {
+//            map = MessageUtil.xmlToMap(req);
+//            String fromUserName = map.get("FromUserName");
+//            String toUserName = map.get("ToUserName");
+//            String msgType = map.get("MsgType");
+//            String content = map.get("Content");
+//            String format = map.get("Format");
+//
+////            String message = null;
+////            if ("text".equals(msgType)) {
+////                TextMessage text = new TextMessage();
+////                text.setFromUserName(toUserName);
+////                text.setToUserName(fromUserName);
+////                text.setMsgType("text");
+////                text.setCreateTime(new Date().getTime());
+////                text.setContent("您发送的消息类型是:" + msgType + ";");
+////                message = MessageUtil.textMessageToXml(text);// message来接收
+////            }
+////            if ("image".equals(msgType)) {
+////                TextMessage text = new TextMessage();
+////                text.setFromUserName(toUserName);
+////                text.setToUserName(fromUserName);
+////                text.setMsgType("text");
+////                text.setCreateTime(new Date().getTime());
+////                text.setContent("您发送的消息类型是:" + msgType + ";");
+////                message = MessageUtil.textMessageToXml(text);// message来接收
+////            }
+////            if ("voice".equals(msgType)) {
+////                TextMessage text = new TextMessage();
+////                text.setFromUserName(toUserName);
+////                text.setToUserName(fromUserName);
+////                text.setMsgType("text");
+////                text.setCreateTime(new Date().getTime());
+////                text.setContent("您发送的消息类型是:" + msgType + ";");
+////                message = MessageUtil.textMessageToXml(text);// message来接收
+////            }
+//            System.out.println(map);
+////            out.println(message);
+//        } catch (DocumentException e) {
+//            e.printStackTrace();
+//        } finally {
+//            out.close();
+//        }
+//    }
     @RequestMapping("/Wx")
     public String getUserId(String code, Model model){
         String url="https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
@@ -125,8 +122,15 @@ public class WxController {
                     //获取用户nick
                     String nickname = (String) json.get("nickname");
                     log.info("微信，用户"+nickname+"登入,时间："+new Date());
-                    map.put("userid",openId);
-                    map.put("name",nickname);
+                    PlatUser user = platUserMapper.getInfo(openId, "Wx");
+                    if (user==null) {
+                        log.error("该用户不在表中");
+                        model.addAttribute("msg","你不在该应用中");
+                        return "error";
+                    } else {
+                        map.put("userid",openId);
+                        map.put("name",nickname);
+                    }
                 }else{
                     log.error("userinfo is null");
                 }

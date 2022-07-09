@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.example.wxreceivefile.pojo.TextMessage;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -41,12 +40,4 @@ public class MessageUtil {
         return map;
     }
 
-    /**
-     * text转换成xml
-     */
-    public static String textMessageToXml(TextMessage textMessage) {
-        XStream xstream = new XStream();
-        xstream.alias("xml", textMessage.getClass());
-        return xstream.toXML(textMessage);
-    }
 }

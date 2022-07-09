@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.wxreceivefile.mapper.PlatUserMapper">
+    <select id="getInfo" resultType="com.example.wxreceivefile.pojo.PlatUser">
+        select id,userName,loginName,isUse,unionid,other_user_id
+        from plat_user
+        <where>
+            <if test="type=='Dd' || type=='QyWx' || type=='Wx'">
+                unionid = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="type=='Fs'">
+                other_user_id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="type=='error'">
+                unionid=#{id,jdbcType=VARCHAR} or other_user_id = #{id,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+</mapper>
