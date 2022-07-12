@@ -1,6 +1,7 @@
-package com.example.wxreceivefile.utils;
+package com.example.wxreceivefile.utils.fileUpload;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.wxreceivefile.utils.fileUpload.HttpClientUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;

@@ -1,4 +1,4 @@
-package com.example.wxreceivefile.utils;
+package com.example.wxreceivefile.utils.test;
 
 public class WXPublicUtils {
 

@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------
 
-package com.example.wxreceivefile.utils;
+package com.example.wxreceivefile.utils.test;
 
 import java.io.StringReader;
 

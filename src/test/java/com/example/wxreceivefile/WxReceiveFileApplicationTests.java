@@ -12,8 +12,6 @@ class WxReceiveFileApplicationTests {
     private PlatUserMapper platUserMapper;
     @Test
     void contextLoads() {
-       String pdfFilePath="D:\\uploadFile\\123\\a89c9fc1-b0cb-4b8c-95fc-97687631aca6Mybatis.pdf";
-       System.out.println(pdfFilePath.substring(pdfFilePath.lastIndexOf("\\")+1,pdfFilePath.lastIndexOf(".")));
     }
 
 }

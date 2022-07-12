@@ -1,15 +1,6 @@
 <template>
   <div style="width: 100%;height: 96vh;"
       v-loading="loading" :element-loading-text="loadingText">
-    <div>
-      <van-nav-bar
-          style="margin: 20px 0px;height: 50px;font-size: 18px"
-          title="文件上传"
-          left-text="返回"
-          left-arrow
-          @click-left="onClickLeft"
-      ></van-nav-bar>
-    </div>
     <div class="con" >
       <van-uploader v-model="fileList.files"
                     :max-count="1"
@@ -63,8 +54,10 @@
         <div :style="'height: 480px;overflow: auto;margin-top: 10px;filter: grayscale('+ImgColor+')'">
           <div v-for="(data,index) in PdfPath" >
             <img :src="'/upload/'+data" style="display:inline-block;width:90%;margin:5px 15px 0px" alt="">
-            <div style="text-align: center;margin-top: 5px">{{index+1}}/{{ PdfPath.length }}</div>
+            <div style="text-align: center;margin-top: 5px">{{index+1}}/{{ totalPage }}</div>
           </div>
+          <div @click="lazy()" style="text-align: center;margin-top: 15px" v-if="!finish">点击加载更多</div>
+          <div style="text-align: center;margin-top: 15px" v-else>已经加载完毕！</div>
         </div>
       </div>
     </van-dialog>
@@ -102,7 +95,10 @@ module.exports = {
       loadingText:"文件上传中...",
       ImgColor:1,
       pdfFilePath:"",
-      fileName:""
+      fileName:"",
+      totalPage:0,
+      pageNo:0,
+      finish:false
     }
   },
   mounted() {
@@ -206,7 +202,7 @@ module.exports = {
         });
         let time1=new Date().getTime()
         axios({
-          url: "/upload/uploadImage",
+          url: "/uploadFile/uploadImage",
           method: "post",
           data: formData,
           headers: {"Content'-Type": "multipart/form-data"}
@@ -221,7 +217,7 @@ module.exports = {
               this.printf();
             }else if (type === "show") {
               this.loadingText="预览生成中...";
-              this.toImage();
+              this.toImage(0);
             }
           } else {
             this.$notify({
@@ -247,18 +243,19 @@ module.exports = {
       }
     },
     toImage(){
+      this.pageNo=0;
       let time1=new Date().getTime();
-      axios.post("/upload/toImage",{
-        "pdfFilePath":this.pdfFilePath
+      axios.post("/uploadFile/toImage",{
+        "pdfFilePath":this.pdfFilePath,
+        "num":this.pageNo
       }).then(({data})=>{
         let time2=new Date().getTime()
         this.$toast("预览耗时"+((time2 - time1) / 1000.0)+"秒");
         if (data.status == 200) {
-          console.log(data)
-          // this.$toast.success('上传成功');
           this.uuid=this.fileList.uuid;
           this.isUpload = true;
           this.PdfPath = data.data;
+          this.totalPage=data.total;
           this.showPdf = true;
         }else{
           this.$notify({
@@ -277,11 +274,40 @@ module.exports = {
         this.isShow=false;
       });
     },
+    lazy(){
+      if(this.totalPage<=this.PdfPath.length){
+        this.$toast.success("已经加载完了")
+        this.finish=true;
+        return false;
+      }
+      this.pageNo=this.pageNo+1;
+      axios.post("/uploadFile/toImage",{
+        "pdfFilePath":this.pdfFilePath,
+        "num":this.pageNo
+      }).then(({data})=>{
+        if (data.status == 200) {
+          for(let i=0;i<data.data.length;i++){
+            this.PdfPath.push(data.data[i]);
+          }
+          console.log(this.PdfPath)
+        }else{
+          this.$notify({
+            type: "danger",
+            message: "加载失败"+data.msg
+          })
+        }
+      }).catch(e=>{
+        this.$notify({
+          type: "danger",
+          message:"加载失败"+ e.message
+        })
+      })
+    },
     printf(){
       let fileName =this.pdfFilePath
       let filePath=fileName.substring(fileName.lastIndexOf("/")+1)
       let time1=new Date().getTime()
-      axios.post("/upload/printf",{
+      axios.post("/uploadFile/printf",{
         "fileName":this.fileName,
         "fileUrl":filePath,
         "loginName":this.userid,

@@ -38,6 +38,7 @@ module.exports = {
   },
   mounted() {
 
+
   },
   methods: {
     file(){
@@ -51,6 +52,20 @@ module.exports = {
     }
   }
 }
+// $(function(){
+//   pushHistory();
+//   window.addEventListener("popstate", function(e) {
+//     location.reload();
+//   }, false);
+//   function pushHistory() {
+//     var state = {
+//       title: "title",
+//       url: "#"
+//     };
+//     window.history.pushState(state, "title", "#");
+//   }
+
+// });
 </script>
 
 <style scoped>

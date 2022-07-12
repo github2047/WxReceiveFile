@@ -3,7 +3,7 @@ package com.example.wxreceivefile.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.wxreceivefile.mapper.PlatUserMapper;
 import com.example.wxreceivefile.pojo.PlatUser;
-import com.example.wxreceivefile.utils.*;
+import com.example.wxreceivefile.utils.fileUpload.HttpClientUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

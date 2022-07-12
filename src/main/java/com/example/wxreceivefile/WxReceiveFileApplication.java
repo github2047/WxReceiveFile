@@ -12,6 +12,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 @MapperScan("com.example.wxreceivefile.*")
+@ComponentScan("com.example.wxreceivefile.*")
 @SpringBootApplication(scanBasePackages ="com.example.*")
 public class WxReceiveFileApplication {
 

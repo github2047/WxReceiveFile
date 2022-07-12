@@ -3,17 +3,8 @@
      v-loading="loading" :element-loading-text="loadingText">
   <div>
     <div>
-      <van-nav-bar
-          style="margin: 20px 0px;height: 50px;font-size: 18px"
-          title="证件上传"
-          left-text="返回"
-          left-arrow
-          @click-left="onClickLeft"
-      ></van-nav-bar>
-    </div>
-    <div>
       <van-uploader :after-read="ZmUp">
-        <div style="width: 300px;text-align: center;margin: 30px 25px;">
+        <div style="width: 300px;text-align: center;margin: 10px 25px 30px;">
           <img id="imgZm" :src="imgZm" width="300px" height="190px">
           <div style="font-size: 16px;text-align: center;margin-top: 10px">正面</div>
         </div>
@@ -66,9 +57,6 @@
         </div>
       </div>
     </div>
-<!--    <div style="width: 100%;background-color: #ccc;height: 500px;overflow: auto;">-->
-<!--      <img :src="'http://mytest.vaiwan.com'+PdfPath" style="display:inline-block;width:90%;margin:30px 40px" alt="">-->
-<!--    </div>-->
   </van-dialog>
   <div>
     <van-button style="width: 96%;height: 50px;font-size: 20px;margin: 30px 10px 10px;
@@ -108,7 +96,7 @@ module.exports= {
       loadingText:"证件上传中...",
       ImgColor:1,
       pdfFilePath:"",
-      fileName:""
+      fileName:"",
     }
   },
   mounted() {
@@ -243,7 +231,7 @@ module.exports= {
       try{
         let time1=new Date().getTime();
         this.loading=true;
-        axios.post("/upload/uploadCard", {
+        axios.post("/uploadFile/uploadCard", {
           "card":this.makePic,
           "userid":this.userid,
           "paperSize":this.paperSize,
@@ -284,7 +272,7 @@ module.exports= {
     },
     toImage(){
       let time1=new Date().getTime();
-      axios.post("/upload/toImage",{
+      axios.post("/uploadFile/toImage",{
         "pdfFilePath":this.pdfFilePath
       }).then(({data})=>{
         if (data.status == 200) {
@@ -317,7 +305,7 @@ module.exports= {
       // console.log(this.fileName);
       let fileName =this.pdfFilePath
       let filePath=fileName.substring(fileName.lastIndexOf("/")+1)
-      axios.post("/upload/printf",{
+      axios.post("/uploadFile/printf",{
         "fileName":this.fileName,
         "fileUrl":filePath,
         "loginName":this.userid,

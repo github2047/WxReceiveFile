@@ -1,4 +1,4 @@
-package com.example.wxreceivefile.utils;
+package com.example.wxreceivefile.utils.test;
 
 @SuppressWarnings("serial")
 public class AesException extends Exception {

@@ -15,8 +15,10 @@
 <script src="../static/js/axios.min.js"></script>
 <script src="../static/js/jquery.js"></script>
 <script src="../static/js/vant.min.js"></script>
+<script src="../static/js/dingtalk.js"></script>
+<script src="../static/js/jquery.min.js"></script>
 <body>
-<div id="ts" style="font-size: 30px;margin-left: 10px;"></div>
+<div id="ts" style="font-size: 14px;margin-left: 10px;"></div>
 <div id="app">
     <router-view/>
 </div>
@@ -38,9 +40,10 @@
         data: {
             loading:true
         },
-        mounted() {}
-    })
+        mounted() {
 
+        }
+    })
     function getQueryString(name) {
         let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
         let r = window.location.search.substr(1).match(reg);
@@ -50,13 +53,20 @@
         return null;
     }
 
+
     function ddInit() {
         try {
             if (dd.env.platform === 'notInDingTalk') {
                 const app=document.getElementById("app")
                 app.remove()
-                document.getElementById("ts").innerHTML='请使用钉钉登录！';
-            } else {
+                document.getElementById("ts").innerHTML="请使用钉钉手机客户端打开";
+                return false;
+            } else if(dd.env.platform === 'pc'){
+                const app=document.getElementById("app")
+                app.remove()
+                document.getElementById("ts").innerHTML=JSON.stringify(dd)
+                return false;
+            }else {
                 dd.ready(function () {
                     var p = new Promise(function (resolve, reject) {
                         dd.runtime.permission.requestAuthCode({

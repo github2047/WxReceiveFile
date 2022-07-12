@@ -1,4 +1,4 @@
-package com.example.wxreceivefile.utils;
+package com.example.wxreceivefile.utils.fileUpload;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

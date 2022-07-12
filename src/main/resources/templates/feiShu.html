@@ -24,7 +24,7 @@
   const router = new VueRouter({
             routes: [
               {
-                path: '/',
+                path: '/hh',
                 name: 'feiShu',
                 component: httpVueLoader("../static/vue/feiShu.vue")
               },
@@ -42,31 +42,31 @@
   })
   function fsInit() {
     try {
-        window.h5sdk.ready(() => { // ready方法不需要每次都调用
+    window.h5sdk.ready(() => { // ready方法不需要每次都调用
           var p = new Promise(function (resolve, reject) {
-            tt.requestAuthCode({
-              appId: "cli_a23ea7c916f99013",
-              success: (info) => {
-                let code = info.code;
-                const ts=document.getElementById("ts")
-                ts.remove();
-                window.localStorage.setItem("code", code);
-                resolve(code)
-              },
-              fail: (err) => {
-                reject(err)
-                this.$notify("error:"+JSON.stringify(err))
-              }
-            });
-            p.then((code) => {
-              console.log("初始化fs成功：", code);
-              alert(code)
-            }).catch((err) => {
-              console.log("初始化飞书异常：", JSON.stringify(err));
-            });
+            document.getElementById("ts").innerHTML=JSON.stringify(window);
+        //     tt.requestAuthCode({
+        //       appId: "cli_a23ea7c916f99013",
+        //       success: (info) => {
+        //         let code = info.code;
+        //         const ts=document.getElementById("ts")
+        //         ts.remove();
+        //         window.localStorage.setItem("code", code);
+        //         resolve(code)
+        //       },
+        //       fail: (err) => {
+        //         reject(err)
+        //         this.$notify("error:"+JSON.stringify(err))
+        //       }
+        //     });
+        //     p.then((code) => {
+        //       console.log("初始化fs成功：", code);
+        //
+        //     }).catch((err) => {
+        //       console.log("初始化飞书异常：", JSON.stringify(err));
+        //     });
           })
         });
-      // }
     } catch (e) {
       console.log("初始化飞书异常2：", e);
       const app=document.getElementById("app")

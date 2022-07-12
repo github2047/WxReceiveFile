@@ -26,6 +26,9 @@
     <script src="../static/js/vant.min.js"></script>
     <script src="../static/js/pdfjs/build/pdf.js"></script>
     <script src="../static/js/html2canvas.min.js"></script>
+    <script src="../static/js/dingtalk.js"></script>
+    <script type="text/javascript"
+            src="https://g.alicdn.com/dingding/open-develop/0.9.2/dingtalk.js"></script>
 </head>
 <body>
 <div id="app">
@@ -73,19 +76,19 @@
         },
         mounted() {
                 let userid= $("#userid").text();
-                // this.$router.push({path: '/home', query: {userid: userid}})
-                axios.post("/verify",{
-                    "userid":userid
-                }).then(r=>{
-                    if(r.data.status=="200"){
-                        let loginName=r.data.loginName;
-                        this.$router.push({path: '/home', query: {userid: loginName}})
-                    }else{
-                        this.$router.push("/error")
-                    }
-                }).catch(e=>{
-                    this.$toast(e.getMessages())
-                })
+                this.$router.push({path: '/home', query: {userid: 123}})
+                // axios.post("/verify",{
+                //     "userid":userid
+                // }).then(r=>{
+                //     if(r.data.status=="200"){
+                //         let loginName=r.data.loginName;
+                //         this.$router.push({path: '/home', query: {userid: loginName}})
+                //     }else{
+                //         this.$router.push("/error")
+                //     }
+                // }).catch(e=>{
+                //     this.$toast(e.getMessages())
+                // })
         },
         methods: {
         }

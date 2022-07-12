@@ -1,4 +1,4 @@
-package com.example.wxreceivefile.utils;
+package com.example.wxreceivefile.utils.fileUpload;
 
 
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
